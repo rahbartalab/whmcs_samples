@@ -4,9 +4,9 @@
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-const DATE_REGEX = '/^\d{4}-\d{2}-\d{2}\s([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/';
-const TOKEN = 1234;
-
+const DATE_TIME_REGEX = '/^\d{4}-\d{2}-\d{2}\s([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/'; // format : YYYY-MM-DD XX:XX:XX
+const TOKEN = '1234';
+const TLD_LIST = ['com', 'net', 'org', 'biz', 'info', 'co', 'me', 'club', 'mobi', 'cc', 'tv', 'center', 'company', 'city', 'click', 'vip', 'download', 'ir'];
 
 /* --!> main logic <!-- */
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,9 +17,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
             $hasPermission = true;
         }
     }
-
     if (!$hasPermission) {
-        logActivity('|module|:mihanshop_domain_registration,|function|:' . __FUNCTION__ . ',|message|:unauthorized attempt');
+        logActivity('|module|:mihanshop_domain_registration,|message|:unauthorized attempt');
         header('location: 403');
     }
 
@@ -31,11 +30,18 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         $errors['client_id'][] = validationMessages('client_id')['required'];
     }
 
-    $expireDate = (isset($_POST['expire_date']) && preg_match(DATE_REGEX, $_POST['expire_date'])) ? $_POST['expire_date'] : null;
+    $expireDate = (isset($_POST['expire_date']) && preg_match(DATE_TIME_REGEX, $_POST['expire_date'])) ? $_POST['expire_date'] : null;
     if (is_null($expireDate)) {
         $errors['expire_date'][] = validationMessages('expire_date')['required'];
     }
 
+    if (empty($errors)) {
+
+        // TODO : register domain
+
+    } else {
+        $_SESSION['errors'] = $errors;
+    }
 
 }
 
@@ -47,18 +53,6 @@ function validationMessages($name)
         'dateTime' => "the $name must be a valid date time"
     ];
 }
-
-/* --!> this is temp <!-- */
-function OTHER_CHECKS()
-{
-    return true;
-}
-
-function registerMihanShopDomain()
-{
-
-}
-
 
 /* --!> module configuration and outputs <!-- */
 const TABLE_NAME = 'mihanshop_domains';
@@ -90,7 +84,6 @@ function mihanshop_domain_registration_activate()
                 function ($table) {
                     $table->increments('id');
                     $table->integer('client_id');
-                    $table->dateTime('expire_date');
                 }
             );
         }
@@ -125,5 +118,5 @@ function mihanshop_domain_registration_deactivate()
 
 function mihanshop_domain_registration_output()
 {
-    require_once __DIR__ . '/templates/output.php';
+    require_once __DIR__ . '/templates/AdminAreaOutput.php';
 }
