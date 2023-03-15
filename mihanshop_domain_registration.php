@@ -4,6 +4,13 @@
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
+/* --!> module configuration and outputs <!-- */
+const TABLE_NAME = 'mihanshop_domains';
+const MODULE_NAME = 'mihanshop_domain_registration';
+
+
+
+
 /* --!> this function is just for testing - and must configure config into specific config files <!-- */
 function config($key)
 {
@@ -51,10 +58,6 @@ function validationMessages($name)
         'dateTime' => "the $name must be a valid date time"
     ];
 }
-
-/* --!> module configuration and outputs <!-- */
-const TABLE_NAME = 'mihanshop_domains';
-const MODULE_NAME = 'mihanshop_domain_registration';
 
 function mihanshop_domain_registration_config()
 {
