@@ -4,16 +4,18 @@
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-const DATE_TIME_REGEX = '/^\d{4}-\d{2}-\d{2}\s([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/'; // format : YYYY-MM-DD XX:XX:XX
-const TOKEN = '1234';
-const TLD_LIST = ['com', 'net', 'org', 'biz', 'info', 'co', 'me', 'club', 'mobi', 'cc', 'tv', 'center', 'company', 'city', 'click', 'vip', 'download', 'ir'];
+/* --!> this function is just for testing - and must configure config into specific config files <!-- */
+function config($key)
+{
+    return (require_once 'config/module.php')[$key];
+}
 
 /* --!> main logic <!-- */
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     /* --!> must send bearer token for authorization <!-- */
     $hasPermission = false;
     if (isset($_SERVER['HTTP_AUTHORIZATION']) && strpos($_SERVER['HTTP_AUTHORIZATION'], 'Bearer') === 0) {
-        if (substr($_SERVER['HTTP_AUTHORIZATION'], 7) === TOKEN) {
+        if (substr($_SERVER['HTTP_AUTHORIZATION'], 7) === config('token')) {
             $hasPermission = true;
         }
     }
@@ -30,10 +32,6 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         $errors['client_id'][] = validationMessages('client_id')['required'];
     }
 
-    $expireDate = (isset($_POST['expire_date']) && preg_match(DATE_TIME_REGEX, $_POST['expire_date'])) ? $_POST['expire_date'] : null;
-    if (is_null($expireDate)) {
-        $errors['expire_date'][] = validationMessages('expire_date')['required'];
-    }
 
     if (empty($errors)) {
 
