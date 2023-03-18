@@ -8,9 +8,6 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 const TABLE_NAME = 'mihanshop_domains';
 const MODULE_NAME = 'mihanshop_domain_registration';
 
-
-
-
 /* --!> this function is just for testing - and must configure config into specific config files <!-- */
 function config($key)
 {
